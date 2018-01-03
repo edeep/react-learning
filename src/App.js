@@ -1,39 +1,73 @@
 import React, { Component } from 'react';
 import './App.css';
 import Person from './Person/Person'
+import UserInputComponent from './UserInput/UserInput';
+import UserOutputComponent from './UserOutput/UserOutput';
 
 class App extends Component {
 
   state = {
-    person: [{ name: "pradeep", power: "12" }, { name: "esha", power: "100" }]
+    userName:['spiderman','wonder woman','hulk'],
+    showComponents:false
   };
 
-  showPower = (newName)=>{
-   this.setState({
-     person: [{ name: newName, power: "12" }, { name: "eshaUpdated", power: "100" }]
-   });
-
-  };
-
+  
   changeName = (event) => {
     this.setState({
-      person: [{ name: event.target.value, power: "12" }, { name: "eshaUpdated", power: "100" }]
+      userName: [event.target.value, event.target.value]
     });
 
   };
 
+  toggleComponents = ()=>{
+    this.setState({ showComponents: !this.state.showComponents});
+  }
+
+  deleteComponent = (compIndex)=>{
+  const tempUserName = [...this.state.userName];
+  tempUserName.splice(compIndex,1);
+  this.setState({ userName: tempUserName });
+
+  //let person = tempUserName[compIndex];
+  
+
+
+  console.log('Delete component' + compIndex);
+  }
+
   render() {
+    const divStyle = {
+      color: 'blue',
+      border: '1px solid pink',
+      margin: 'auto',
+      width: '60 %',
+      padding: '16px'
+    };
+
+   var mycomponents = null;
+   if(this.state.showComponents){
+     mycomponents =(
+       <div>
+       <UserInputComponent name={this.state.userName[0]} changename={this.changeName} />
+      {this.state.userName.map((oneUsername, index)=>{
+           return <UserOutputComponent key={oneUsername.userName} 
+           click={()=>{this.deleteComponent(index)}}
+           name={oneUsername.userName}> Component {index}</UserOutputComponent>;
+      })}
+      
+       </div>
+     );
+   }
+
+      
     return (
-      <div className="App">
+      <div style={divStyle} className="App">
         <p >
           React app Begins!!
+          
         </p>
-         <button onClick={()=>this.showPower('Batman')}> Show Power</button>
-        <Person changename={this.changeName} name={this.state.person[0].name}> Eat well </Person>
-        <Person click={this.showPower.bind(this, 'Superman')}  name={this.state.person[1].name}> 
-        play well </Person>
-        <Person 
-        name={this.state.person[0].name}> Sleep well </Person>
+        <button onClick={this.toggleComponents}>Toggle components</button>
+        {mycomponents}
       </div>
     );
   }
